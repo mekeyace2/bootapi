@@ -5,6 +5,7 @@
 <title>연습 HTML</title>
 </head>
 <body>
+<span th:insert="~{/test/ori.html :: top}"></span>
 <form th:action="@{/test/test}" method="post">
 <input type="submit" value="클릭">
 </form>

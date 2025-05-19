@@ -6,6 +6,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class main {
+	
+	@GetMapping("/test2.do")
+	public String test23() {
+		return "/test/test.html";
+	}
+	
 /*
 	@Autowired
 	test_dao dao;

@@ -26,16 +26,23 @@ repositories {
 
 dependencies {
 	
+	
+	
 	//implementation 'org.springframework.boot:spring-boot-starter-security'
 	//testImplementation 'org.springframework.security:spring-security-test'
+
+	//JPA
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+	//Mybatis
+
 	//Database
-	/*
 	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.4'
-	*/	
+	
 	
 	//thymeleaf
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
