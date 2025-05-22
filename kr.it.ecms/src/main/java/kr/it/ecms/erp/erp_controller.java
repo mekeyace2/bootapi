@@ -8,7 +8,12 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,6 +31,32 @@ public class erp_controller {
 	
 	PrintWriter pw = null;
 	
+	//데이터 리스트 출력 및 페이징 번호 포함 (JPA)
+	@GetMapping("/jpa_memberlist.do")
+	public String jpa_memberlist(Model m) {
+		int page_ea = 5;
+				
+		//Sort(Class) => 데이터 배열을 정렬을 하는 Class
+		//Sort st = Sort.by("uidx").descending();
+		Sort st = Sort.by(Sort.Order.desc("uidx"));
+		//Sort st = Sort.by(Sort.Order.desc("uidx"),Sort.Order.asc("uname"));
+			
+		//Pageable(interface) : Database를 limit 0,3
+		Pageable pg = PageRequest.of(0,page_ea,st);		//Pageable = Map
+		
+		//Pageable에 대한 interface의 값을 배열로 받아서 처리하는 결과(List)
+		Page<erp_loginDTO> result = this.repo.findAll(pg);
+		System.out.println(result.getTotalPages());	//전체 데이터를 확인하여 page 번호 갯수 확인
+		System.out.println(result.getContent());	//DTO 기준으로 배열화 적용되어 데이터를 출력
+		/*
+		for(erp_loginDTO dto : result) {
+			System.out.println(dto.getUname());
+		}
+		*/
+		m.addAttribute("pgno",result.getTotalPages());
+		m.addAttribute("result",result.getContent());
+		return null;
+	}
 	
 	
 	

@@ -22,7 +22,10 @@ public interface jpa_repo extends JpaRepository<erp_loginDTO, Integer> {
 	@Query("select now() as today")
 	String mysql_today();
 		
-	//전체데이터를 가져옴
+	//jsp, jstl, thymeleaf 형태로 출력하는 interface
+	Page<erp_loginDTO> findAll(Pageable pg); //검색어, 0,3,desc or asc
+	
+	//전체데이터를 가져옴(React에서 Ajax로 통신)
 	List<erp_loginDTO> findAll();
 	
 	//전체데이터를 가져올시 고유값을 기준으로 최신 데이터를 상위(desc)를 적용
