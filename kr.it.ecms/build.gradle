@@ -31,6 +31,9 @@ dependencies {
 	//implementation 'org.springframework.boot:spring-boot-starter-security'
 	//testImplementation 'org.springframework.security:spring-security-test'
 
+	//JSON
+	implementation 'org.json:json:20231013'
+
 	//JPA
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 

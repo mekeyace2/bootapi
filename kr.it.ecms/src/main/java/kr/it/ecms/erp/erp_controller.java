@@ -1,19 +1,24 @@
 package kr.it.ecms.erp;
 
 import java.io.PrintWriter;
+import java.util.List;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.servlet.ServletResponse;
 
 
-@RestController
+@Controller
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class erp_controller {
 
@@ -22,19 +27,143 @@ public class erp_controller {
 	PrintWriter pw = null;
 	
 	
-	@Autowired
+	
+	
+	
+	
+	
+	//.war  .jar(서버 포트 포워딩 필수)	
+	@Autowired(required=true)
 	public jpa_repo repo;
+		
+	//React에 select 데이터 전송
+	@GetMapping("/jpa_member.do")
+	public String jpa_member(ServletResponse res) throws Exception {
+		try {
+			res.setContentType("text/html;charset=utf-8");
+			this.pw = res.getWriter();
+			
+			List<erp_loginDTO> all = this.repo.findByOrderByUidxDesc();
+			JSONObject jo = new JSONObject();
+			JSONArray ja1 = new JSONArray();
+			
+			for(erp_loginDTO a : all) {
+				JSONArray ja2 = new JSONArray();
+				ja2.put(a.getUidx());
+				ja2.put(a.getUid());
+				ja2.put(a.getUname());
+				ja2.put(a.getGernder());
+				ja2.put(a.getJoindate());
+				ja1.put(ja2);
+			}
+			jo.put("members", ja1);
+			this.pw.print(jo);
+		}catch (Exception e) {
+			this.pw.print("API Server Error");
+		}finally {
+			this.pw.close();
+		}
+		return null;
+	}
+	
+	
+	
+	
+	//React에서 fetch로 Ajax(FormData)로 통신
+	@PostMapping("/jpa_join.do")
+	public String jpa_join(
+		@RequestParam("uid") String uid,
+		@RequestParam("uname") String uname,
+		@RequestParam("gernder") String gernder, ServletResponse res) throws Exception {
+		this.pw = res.getWriter();
+		try {
+			//실서버에 있는 시간을 가져오는 코드
+			String today = repo.mysql_today();
+			
+			//DTO에 즉시실행 메소드에 setter로 값을 이관
+			erp_loginDTO dto = new erp_loginDTO(0,uid,uname,gernder,today);
+			this.repo.save(dto);	//JPA에서 DTO를 이용하여 SQL 저장함
+			this.pw.print("ok");
+			
+		}catch (Exception e) {
+			this.pw.print("error");
+		}
+		/*
+		System.out.println(uid);
+		System.out.println(uname);
+		System.out.println(gernder);
+		*/
+		return null;
+	}
+	
+	
+	@GetMapping("/jpa_select.do")
+	public String jpa_select() {
+		//findAll은 select * from 테이블명
+		//List<erp_loginDTO> all = this.repo.findAll();
+		List<erp_loginDTO> all = this.repo.findAllByOrderByUidxDesc();
+		System.out.println(all.size());
+		System.out.println(all.get(1).getUid());
+		
+		//List<erp_loginDTO> all2 = this.repo.findByUid("apink");
+		List<erp_loginDTO> all2 = this.repo.findByUidAndGernder("apink","W");
+		System.out.println(all2.get(0).getUname());
+		
+		
+		return null;
+	}
+	
+	@GetMapping("/jpa_update.do")
+	public String jpa_update() {
+		
+		int result = this.repo.myinfo_update("hong","홍길동");
+		System.out.println(result);
+		
+		return null;
+	}
+	
+	
+
+	@GetMapping("/jpa_insert2.do")
+	public String jpa_insert2() {
+		String today = this.repo.mysql_today();
+		//int result = this.repo.mysql_insert("black", "블랙", "W", today);
+		//erp_loginDTO dtos = erp_loginDTO;
+		
+		//System.out.println(result);
+		
+		return null;
+	}
+
+		
 	
 	//jpa를 활용하여 insert
 	@GetMapping("/jpa_insert.do")
 	public String jpa_insert() {
 		//신규 데이터를 입력하는 샘플이며, DTO에 메소드 순서에 맞게 인자값을 생성함
-		erp_loginDTO dto = new erp_loginDTO(1,"park");
-		
-		
+		//erp_loginDTO dto = new erp_loginDTO(0,"hong");	
 		//save => JPA 전용 메소드 (select 후 insert)
-		erp_loginDTO saveEntity = this.repo.save(dto);
-		System.out.println(saveEntity.getUidx());
+		//erp_loginDTO saveEntity = this.repo.save(dto);
+		//System.out.println(saveEntity);	
+		
+		//고유값 및 시간 표현
+		//LocalDateTime : Window 시간을 가져와서 DB 저장하는 방식
+		//LocalDateTime todays = LocalDateTime.now(); 
+		
+		//Database에서 적용된 시간을 가져와서 DB 저장하는 방식
+		try {
+		String today = this.repo.mysql_today();
+		/*save 메소드는 두가지 기능 
+		1. insert 기능 : Primary key 기준 핸들링 되며, 해당 조건이 없을 경우
+		2. update 기능 : Primary key 동일한 값이 있을 경우 해당 정보의 값을 수정
+		*/
+		erp_loginDTO dto = new erp_loginDTO(0,"apink","에이핑크","W",today);
+		erp_loginDTO insert = this.repo.save(dto);
+		
+		System.out.println("정상적으로 가입이 되었습니다.");
+		}catch(Exception e) {	//save메소드 발생시 insert가 정상적으로 작동되지 않을 경우
+		System.out.println("해당 아이디의 값이 중복 되어서 저장 되지 않습니다.");	
+		}
 		
 		return null;
 	}
