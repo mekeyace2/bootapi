@@ -34,21 +34,23 @@ public class erp_controller {
 	//데이터 리스트 출력 및 페이징 번호 포함 (JPA)
 	@GetMapping("/jpa_memberlist.do")
 	public String jpa_memberlist(Model m, 
-			@RequestParam(name="pageno", required = false)String pageno) {
+			@RequestParam(name="pageno", required = false)Integer pageno) {
 		//최초 페이지 접속시 page번가 없으므로 기본 페이지 번호를 강제로 입력하는 코드		
-		if(pageno==null) {
-			pageno = "1";
+		if(pageno==null || pageno==1) {
+			pageno = 0;
 		}
-		int page_ea = 5;	//한 페이지당 데이터 갯수 출력 숫자
+		else {
+			pageno = pageno - 1;
+		}
 		
-				
+		int page_ea = 2;	//한 페이지당 데이터 갯수 출력 숫자
 		//Sort(Class) => 데이터 배열을 정렬을 하는 Class
 		//Sort st = Sort.by("uidx").descending();
 		Sort st = Sort.by(Sort.Order.desc("uidx"));
 		//Sort st = Sort.by(Sort.Order.desc("uidx"),Sort.Order.asc("uname"));
 			
-		//Pageable(interface) : Database를 limit 0,3
-		Pageable pg = PageRequest.of(0,page_ea,st);		//Pageable = Map
+		//Pageable(interface) : Database를 limit 0,3 => 두번째 페이지 부터 1~ 
+		Pageable pg = PageRequest.of(pageno,page_ea,st);		//Pageable = Map
 		
 		//Pageable에 대한 interface의 값을 배열로 받아서 처리하는 결과(List)
 		Page<erp_loginDTO> result = this.repo.findAll(pg);
