@@ -33,8 +33,14 @@ public class erp_controller {
 	
 	//데이터 리스트 출력 및 페이징 번호 포함 (JPA)
 	@GetMapping("/jpa_memberlist.do")
-	public String jpa_memberlist(Model m) {
-		int page_ea = 5;
+	public String jpa_memberlist(Model m, 
+			@RequestParam(name="pageno", required = false)String pageno) {
+		//최초 페이지 접속시 page번가 없으므로 기본 페이지 번호를 강제로 입력하는 코드		
+		if(pageno==null) {
+			pageno = "1";
+		}
+		int page_ea = 5;	//한 페이지당 데이터 갯수 출력 숫자
+		
 				
 		//Sort(Class) => 데이터 배열을 정렬을 하는 Class
 		//Sort st = Sort.by("uidx").descending();

@@ -38,7 +38,7 @@
 </body>
 <script>
 function page_go(p){
-	console.log(p);
+	location.href='./jpa_memberlist.do?pageno='+p;
 }
 
 </script>
