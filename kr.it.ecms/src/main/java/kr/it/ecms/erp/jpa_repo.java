@@ -17,6 +17,8 @@ import jakarta.transaction.Transactional;
 //JPA Repo
 public interface jpa_repo extends JpaRepository<erp_loginDTO, Integer> {
 	
+	@Query("select count(*) as ctn from erp_loginDTO")
+	Integer totals();
 	
 	//@Query : 개발자가 원하는 DDL 문법을 사용하여 적용하는 방식
 	@Query("select now() as today")
@@ -31,14 +33,13 @@ public interface jpa_repo extends JpaRepository<erp_loginDTO, Integer> {
 	//전체데이터를 가져올시 고유값을 기준으로 최신 데이터를 상위(desc)를 적용
 	//select * from erp_logindto order by uidx desc
 	//findBy(데이터 1개),findAllBy(데이터 전체)동일한 동작 
-	List<erp_loginDTO> findByOrderByUidxDesc();
+	List<erp_loginDTO> findByOrderByUidxDesc(Pageable pg);
 	List<erp_loginDTO> findAllByOrderByUidxDesc();
 	
 	//select * from erp_logindto where uid=#{uid}
 	List<erp_loginDTO> findByUid(String uid);
 	List<erp_loginDTO> findByUidAndGernder(String uid,String gernder);
-	
-		
+			
 	@Query("update erp_loginDTO set uname=:uname where uid = :uid")
 	//JPA를 사용하여 update, delete문을 위에서 했던 방식으로 직접 작성하여 실행 할때는 @Transactional
 	@Transactional	

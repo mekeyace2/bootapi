@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.servlet.ServletResponse;
 
@@ -77,12 +76,29 @@ public class erp_controller {
 		
 	//React에 select 데이터 전송
 	@GetMapping("/jpa_member.do")
-	public String jpa_member(ServletResponse res) throws Exception {
+	public String jpa_member(ServletResponse res,
+			@RequestParam(name="callpg", required = false)Integer callpg
+			) throws Exception {
 		try {
 			res.setContentType("text/html;charset=utf-8");
 			this.pw = res.getWriter();
+			//1Page당 4개씩 데이터 출력
+			Integer pagedata_ea = 4;
+			Integer startpg = 0;
+			if(callpg == 1) {
+				startpg = 0;
+			}
+			else {
+				startpg = callpg - 1;
+			}
 			
-			List<erp_loginDTO> all = this.repo.findByOrderByUidxDesc();
+			//페이징에 구분하여 데이터를 limit 처리 후 List배열로 적용하는 방식
+			Pageable pg = PageRequest.of(startpg, pagedata_ea);
+			List<erp_loginDTO> all = this.repo.findByOrderByUidxDesc(pg);
+			
+			//Back-end가 전체 갯수를 확인 후 한페이지당 계산하여 페이징 번호를 전달
+			Integer total = (int)Math.ceil((double)this.repo.totals() / pagedata_ea);
+					
 			JSONObject jo = new JSONObject();
 			JSONArray ja1 = new JSONArray();
 			
@@ -93,6 +109,7 @@ public class erp_controller {
 				ja2.put(a.getUname());
 				ja2.put(a.getGernder());
 				ja2.put(a.getJoindate());
+				ja2.put(total);		// 데이터 전체 갯수
 				ja1.put(ja2);
 			}
 			jo.put("members", ja1);
