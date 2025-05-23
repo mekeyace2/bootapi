@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>RestAPI - POST (Javascript + JSON.stringify)</title>
+</head>
+<body>
+<input type="checkbox" name="pd" value="pd1">상품1<br>
+<input type="checkbox" name="pd" value="pd2">상품2<br>
+<input type="checkbox" name="pd" value="pd3">상품3<br>
+<input type="checkbox" name="pd" value="pd4">상품4<br>
+<input type="checkbox" name="pd" value="pd5">상품5<br>
+<input type="button" value="전송" onclick="ajax()">
+</body>
+<script>
+function ajax(){
+	var pd = document.getElementsByName("pd");
+	var arr = new Object();		//Array 대신 Object 변경
+	var ct = 0;
+	for(var f=0; f<pd.length; f++){
+		if(pd[f].checked==true){
+			arr[ct] = pd[f].value;
+			ct++;
+		}
+	}
+	
+	var data;  //백엔드에게 전송하는 변수명(보안코드)
+	var ajax_data;		//ajax통신(POST)
+	ajax_data = new XMLHttpRequest();
+	
+	ajax_data.onreadystatechange = function(){
+		if(ajax_data.readyState==4){
+			if(ajax_data.status==200){
+				console.log(this.response);
+			}
+		}
+	}
+	
+	ajax_data.open("POST","./api_ajax2.do",true);
+	//setRequestHeader => json
+	ajax_data.setRequestHeader("content-type","application/json");
+	ajax_data.send(JSON.stringify(arr));	//=> 전송방식 JSON.stringify
+}
+</script>
+
+
+
+
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>RestAPI - POST(Jquery + JSON.stringify)</title>
+<script src="./jquery.js"></script>
+</head>
+<body>
+<input type="checkbox" class="pd" value="pd1">상품1<br>
+<input type="checkbox" class="pd" value="pd2">상품2<br>
+<input type="checkbox" class="pd" value="pd3">상품3<br>
+<input type="checkbox" class="pd" value="pd4">상품4<br>
+<input type="checkbox" class="pd" value="pd5">상품5<br>
+<input type="button" value="전송" id="ajax">
+</body>
+<script>
+$(function(){
+		$("#ajax").click(function(){
+			var $ajaxdata = new Array();
+			var $w = 0;
+			var $arrno = 0;
+			var $ea = $(".pd").length;
+			while($w < $ea){
+				//checkbox에 check된 데이터 사항만 확인하는 조건
+				if($(".pd").eq($w).is(":checked") == true){
+					$ajaxdata[$arrno] = $(".pd").eq($w).val();
+					$arrno++;
+				}
+				$w++;
+			}
+			//최종 JSON형태로 Backend에게 전송함
+			var $fdata = JSON.stringify({fdata : $ajaxdata});
+			$.ajax({
+				url : "./api_ajax5.do",
+				cache : false,
+				type : "POST",
+				dataType : "html",
+				contentType : "application/json",
+				async : true,	
+				data : $fdata,
+				success:function($data){
+					console.log($data)
+				},error:function(){
+					console.log("API서버 에러");
+				}
+			});
+			
+			
+			
+		});
+});
+</script>
+</html>
