@@ -41,6 +41,7 @@ public class securityconfig {
 		http.authorizeHttpRequests((auth)->auth
 				.requestMatchers("/web1.do","/web2.do").permitAll()
 				.requestMatchers("/joinok.do").permitAll()
+				.requestMatchers("/WEB-INF/**").permitAll()	//MVC중 JSP를 출력 위한 경로 또한 보안에서 접근허락
 				.requestMatchers("/adminlist.do").hasRole("ADMIN")
 				.anyRequest().authenticated()
 		);
