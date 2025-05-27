@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>주문번호 확인 서비스 (Javascript - PUT)</title>
+</head>
+<body>
+완제품 번호 : <input type="text" id="scode" maxlength="6"><br>
+<input type="button" value="QR생성" onclick="qr_make()"><br> 
+<div id="qrview"></div><br>
+<img id="qrimg" src="">
+</body>
+<script>
+function qr_make(){
+	var html;
+	var data = document.getElementById("scode");
+	if(data.value == ""){
+		alert("완제품 번호를 6자리 입력하세요!");
+	}else{
+		html = new XMLHttpRequest();
+		html.onreadystatechange = function(){
+			if(html.readyState == XMLHttpRequest.DONE && html.status==200){
+				if(this.responseText != "error"){
+				document.getElementById("qrview").append(this.responseText);
+				document.getElementById("qrimg").src = this.responseText;
+				}
+			}
+		}
+		html.open("PUT","./api_ajax7.do/"+data.value,true);
+		html.send();
+	}
+}
+</script>
+</html>

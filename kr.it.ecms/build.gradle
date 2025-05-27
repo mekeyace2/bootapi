@@ -26,11 +26,14 @@ repositories {
 
 dependencies {
 	
+	//Spring Security
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	testImplementation 'org.springframework.security:spring-security-test'
 	
+	//QR and 바코드
+	implementation 'com.google.zxing:core:3.5.3'
+	implementation 'com.google.zxing:javase:3.5.3'
 	
-	//implementation 'org.springframework.boot:spring-boot-starter-security'
-	//testImplementation 'org.springframework.security:spring-security-test'
-
 	//JSON
 	implementation 'org.json:json:20231013'
 

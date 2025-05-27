@@ -30,6 +30,34 @@ import jakarta.servlet.http.HttpServletResponse;
 public class api_controller {
 		
 		PrintWriter pw = null;
+		//JS - Ajax (PUT) - Image Return (CDN)
+		@PutMapping("/ajax/api_ajax7.do/{scode}")
+		public String ajax7(@PathVariable(name="scode") String scode,
+				HttpServletResponse res, HttpServletRequest req) throws Exception {
+		String url = "http://localhost:9000/ajax/api_ajax8.do?scode="+scode;
+		System.out.println(url);
+		int size = 200;
+		int hsize = 50;
+		BitMatrix bm = new MultiFormatWriter().encode(url, BarcodeFormat.QR_CODE, size, size);
+		//BitMatrix bm = new MultiFormatWriter().encode(url, BarcodeFormat.CODE_128, size, hsize);		
+		ByteArrayOutputStream bs = null;		
+		try {
+			bs = new ByteArrayOutputStream();
+			MatrixToImageWriter.writeToStream(bm, "PNG", bs);
+			String fileurl = req.getServletContext().getRealPath("/");
+			System.out.println(fileurl);
+			FileCopyUtils.copy(bs.toByteArray(), new File(fileurl + scode + ".png"));
+			bs.flush();
+			
+			this.pw = res.getWriter();
+			this.pw.print("http://localhost:9000/"+scode+".png");
+			this.pw.close();
+		}catch(Exception e) {
+			
+		}		
+		return null;
+		}
+		
 		
 		
 		//JQ - Ajax (POST) - FormData

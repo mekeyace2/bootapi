@@ -27,6 +27,8 @@ public interface jpa_repo extends JpaRepository<erp_loginDTO, Integer> {
 	//jsp, jstl, thymeleaf 형태로 출력하는 interface
 	Page<erp_loginDTO> findAll(Pageable pg); //검색어, 0,3,desc or asc
 	
+	
+	
 	//전체데이터를 가져옴(React에서 Ajax로 통신)
 	List<erp_loginDTO> findAll();
 	
@@ -34,6 +36,12 @@ public interface jpa_repo extends JpaRepository<erp_loginDTO, Integer> {
 	//select * from erp_logindto order by uidx desc
 	//findBy(데이터 1개),findAllBy(데이터 전체)동일한 동작 
 	List<erp_loginDTO> findByOrderByUidxDesc(Pageable pg);
+	
+	//해당 리스트에서 검색(이름)을 검색하는 JAP Query문
+	List<erp_loginDTO> findByUname(String uname);
+	
+	
+	
 	List<erp_loginDTO> findAllByOrderByUidxDesc();
 	
 	//select * from erp_logindto where uid=#{uid}

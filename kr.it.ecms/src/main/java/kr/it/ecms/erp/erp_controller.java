@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 
 
@@ -29,6 +30,42 @@ public class erp_controller {
 	Logger log = LoggerFactory.getLogger(this.getClass());
 	
 	PrintWriter pw = null;
+	
+	//검색어를 입력하여 검색된 데이터를 처리하는 메소드
+	@GetMapping("/jpa_search.do")
+	public String jpa_search(ServletResponse res, @RequestParam(name="search") String search) throws Exception {
+		
+		//검색된 데이터를 가져오는 형태
+		List<erp_loginDTO> all = this.repo.findByUname(search);
+		this.pw = res.getWriter();
+		try {
+		//검색된 데이터 갯수만
+		int total = all.size();
+		
+		JSONObject jo = new JSONObject();
+		JSONArray ja1 = new JSONArray();
+		
+		for(erp_loginDTO a : all) {
+			JSONArray ja2 = new JSONArray();
+			ja2.put(a.getUidx());
+			ja2.put(a.getUid());
+			ja2.put(a.getUname());
+			ja2.put(a.getGernder());
+			ja2.put(a.getJoindate());
+			ja2.put(total);		// 데이터 전체 갯수
+			ja1.put(ja2);
+		}
+		jo.put("members", ja1);
+		System.out.println(jo.toString());
+			this.pw.print(jo);
+		}catch(Exception e) {
+			
+		}finally {
+			this.pw.close();
+		}
+		return null;
+	}
+		
 	
 	//데이터 리스트 출력 및 페이징 번호 포함 (JPA)
 	@GetMapping("/jpa_memberlist.do")
